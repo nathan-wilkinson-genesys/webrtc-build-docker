@@ -83,10 +83,10 @@ docker run --platform linux/amd64 --rm -v "$(pwd)/out:/out" \
         esac
         
         # Generate build files
-        gn gen out/\$arch --args=\"target_os=\\\"android\\\" target_cpu=\\\"\$gn_arch\\\" $BUILD_ARGS\"
+        gn gen out/\$gn_arch --args=\"target_os=\\\"android\\\" target_cpu=\\\"\$gn_arch\\\" $BUILD_ARGS\"
         
         # Build the required targets
-        autoninja -C out/\$arch sdk/android:libwebrtc sdk/android:libjingle_peerconnection_so
+        autoninja -C out/\$gn_arch sdk/android:libwebrtc sdk/android:libjingle_peerconnection_so
     done
 
     echo '==> Create AAR manually'
