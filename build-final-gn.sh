@@ -64,33 +64,10 @@ docker run --platform linux/amd64 --rm -v "$(pwd)/out:/out" \
     git log --pretty=fuller HEAD...HEAD^ > \$OUT/revision.txt
     echo \"BUILD_ARGS: $BUILD_ARGS\" >> \$OUT/build_args.txt
 
-    echo '==> Build directly with GN and Ninja'
+    echo '==> Build AAR via build_aar.py (it drives GN gen + ninja itself for every architecture)'
     source build/android/envsetup.sh
 
-    # Define Android architectures
-    DEFAULT_ARCHS=(armeabi-v7a arm64-v8a x86 x86_64)
-
-    # Build for each Android architecture
-    for arch in \"\${DEFAULT_ARCHS[@]}\"; do
-        echo \"Building for \$arch\"
-        
-        # Convert arch names
-        case \$arch in
-            armeabi-v7a) gn_arch=\"arm\" ;;
-            arm64-v8a) gn_arch=\"arm64\" ;;
-            x86) gn_arch=\"x86\" ;;
-            x86_64) gn_arch=\"x64\" ;;
-        esac
-        
-        # Generate build files
-        gn gen out/\$gn_arch --args=\"target_os=\\\"android\\\" target_cpu=\\\"\$gn_arch\\\" $BUILD_ARGS\"
-        
-        # Build the required targets
-        autoninja -C out/\$gn_arch sdk/android:libwebrtc sdk/android:libjingle_peerconnection_so
-    done
-
-    echo '==> Create AAR manually'
-    python3 tools_webrtc/android/build_aar.py --build-dir out --output \$OUT/libwebrtc.aar
+    python3 tools_webrtc/android/build_aar.py --build-dir out --output \$OUT/libwebrtc.aar --extra-gn-args $BUILD_ARGS
 
     echo 'Done!'
 "
