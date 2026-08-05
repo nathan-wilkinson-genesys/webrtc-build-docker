@@ -2,7 +2,7 @@
 set -euo pipefail
 
 IMAGE=threema/webrtc-build-tools:latest
-BUILD_ARGS="${WEBRTC_BUILD_ARGS:-symbol_level=1 debuggable_apks=false enable_libaom=false rtc_enable_protobuf=false rtc_include_dav1d_in_internal_decoder_factory=false use_siso=false android_static_analysis=\\\"off\\\" is_component_build=false rtc_include_tests=false use_goma=false}"
+BUILD_ARGS="${WEBRTC_BUILD_ARGS:-symbol_level=1 debuggable_apks=false enable_libaom=false rtc_enable_protobuf=false rtc_include_dav1d_in_internal_decoder_factory=false use_siso=false android_static_analysis=\\\"off\\\" is_component_build=false rtc_include_tests=false}"
 
 if [ $# -ne 1 ]; then
     echo "Usage: $0 <version>"
