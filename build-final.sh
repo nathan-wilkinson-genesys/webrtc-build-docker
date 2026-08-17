@@ -67,7 +67,15 @@ docker run --platform linux/amd64 --rm -v "$(pwd)/out:/out" -v "$(pwd)/patches:/
     echo \"WEBRTC_COMPILE_ARGS: \$WEBRTC_COMPILE_ARGS\" >> \$OUT/build_args.txt
 
     echo '==> Apply patches'
-    for p in /patches/*.patch; do echo \"Applying \$p...\"; git apply \$p; done 
+    for p in /patches/*.patch; do
+        echo \"Applying \$p...\"
+        # git apply is stricter, but refuses paths that live inside nested
+        # gclient-managed repos (e.g. third_party/jni_zero). Fall back to
+        # patch(1), which ignores git boundaries -- this is what upstream
+        # community builds (shiguredo) use. git apply is atomic, so a failed
+        # attempt changes nothing and there is no double-apply risk.
+        git apply \$p || patch -p1 --forward < \$p
+    done
     ls -noa --time-style=long-iso /patches/*.patch > \$OUT/patches.txt
 
     echo '==> Package AAR'
